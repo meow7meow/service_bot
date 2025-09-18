@@ -78,9 +78,8 @@
     }
     // Открытие Telegram с параметрами
     function openTelegram(params) {
-      alert('Переход в Telegram');
-      const paramStr = btoa(JSON.stringify(params));
-      window.location.href = `https://t.me/biomusor7bot?start=${paramStr}`;
+      const queryString = new URLSearchParams(params).toString();
+      window.location.href = `tg://resolve?domain=biomusor7bot&${queryString}`;
     }
 
     // Инициализация страницы
@@ -120,6 +119,7 @@
   </script>
 </body>
 </html>
+
 
 
 
