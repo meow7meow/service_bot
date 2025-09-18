@@ -46,10 +46,10 @@
     function openTelegram(params) {
       // Формируем параметры для Telegram
       const queryString = new URLSearchParams(params).toString();
-      const telegramUrl = `https://t.me/FixPrintBot?${queryString}`;
+      const telegramUrl = `https://t.me/biomusor7bot?${queryString}`;
       
       // Пытаемся открыть через deep link
-      window.location.href = `tg://resolve?domain=FixPrintBot&${queryString}`;
+      window.location.href = `tg://resolve?domain=biomusor7bot&${queryString}`;
     }
 
     // Основная функция инициализации
@@ -84,3 +84,4 @@
   </script>
 </body>
 </html>
+
