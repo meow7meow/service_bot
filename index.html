@@ -25,7 +25,7 @@
         <p>Загрузка данных оборудования...</p>
       </div>
     </div>
-    <button id="telegramBtn" class="btn">
+    <button id="telegramBtn" class="btn" type="button">
       📋 Создать обращение в Telegram
     </button>
   </div>
@@ -78,9 +78,11 @@
     }
     // Открытие Telegram с параметрами
     function openTelegram(params) {
+      alert('Переход в Telegram');
       const paramStr = btoa(JSON.stringify(params));
       window.location.href = `https://t.me/biomusor7bot?start=${paramStr}`;
     }
+
     // Инициализация страницы
     function initPage() {
       let params = getQueryParams();
@@ -118,5 +120,6 @@
   </script>
 </body>
 </html>
+
 
 
