@@ -1,87 +1,85 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ServisDesk - Информация об оборудовании</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; background: #f0f8ff; }
-    .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    h1 { color: #2c5282; text-align: center; }
-    .device-info { background: #e6f7ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1890ff; }
-    .btn { display: block; padding: 15px 30px; background: #0088cc; color: white; text-decoration: none; 
-           border-radius: 8px; font-size: 18px; text-align: center; margin: 20px 0; cursor: pointer; border: none; }
-    .btn:hover { background: #006699; }
-    .info-item { margin: 8px 0; padding: 8px; background: #f8f9fa; border-radius: 4px; border-left: 3px solid #0088cc; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>🖨️ ServisDesk</h1>
-    
-    <div class="device-info">
-      <h2>📋 Информация об оборудовании</h2>
-      <div id="deviceData">
-        <p>Загрузка данных оборудования...</p>
-      </div>
-    </div>
-
-    <button id="telegramBtn" class="btn">
-      📋 Создать обращение в Telegram
-    </button>
-  </div>
-
-  <script>
-    // Функция для получения параметров из URL
-    function getQueryParams() {
-      const params = {};
-      const urlParams = new URLSearchParams(window.location.search);
-      for (const [key, value] of urlParams.entries()) {
-        params[key] = decodeURIComponent(value);
+<script>
+  // Функция для установки cookie
+  function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days*24*60*60*1000));
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
+  }
+  // Функция для чтения cookie по имени
+  function getCookie(name) {
+    const cname = name + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookieArr = decodedCookie.split(';');
+    for(let i = 0; i < cookieArr.length; i++) {
+      let c = cookieArr[i].trim();
+      if (c.indexOf(cname) === 0) {
+        return c.substring(cname.length, c.length);
       }
-      return params;
     }
-
-    // Функция открытия Telegram
-    function openTelegram(params) {
-      // Формируем параметры для Telegram
-      const queryString = new URLSearchParams(params).toString();
-      const telegramUrl = `https://t.me/biomusor7bot?${queryString}`;
-      
-      // Пытаемся открыть через deep link
-      window.location.href = `tg://resolve?domain=biomusor7bot&${queryString}`;
+    return "";
+  }
+  // Функция для получения параметров из URL
+  function getQueryParams() {
+    const params = {};
+    const urlParams = new URLSearchParams(window.location.search);
+    for (const [key, value] of urlParams.entries()) {
+      params[key] = decodeURIComponent(value);
     }
+    return params;
+  }
 
-    // Основная функция инициализации
-    function initPage() {
-      const params = getQueryParams();
-      
-      if (Object.keys(params).length === 0) {
-        document.getElementById('deviceData').innerHTML = 
-          '<p style="color: red;">❌ Данные оборудования не переданы</p>';
-        document.getElementById('telegramBtn').style.display = 'none';
-        return;
+  // Сохраняем параметры в cookie (в виде JSON строки)
+  function saveParamsToCookie(params) {
+    setCookie("deviceParams", JSON.stringify(params), 7); // срок хранения 7 дней
+  }
+  // Получаем параметры из cookie
+  function getParamsFromCookie() {
+    const cookie = getCookie("deviceParams");
+    if (cookie) {
+      try {
+        return JSON.parse(cookie);
+      } catch (e) {
+        return {};
       }
+    }
+    return {};
+  }
+  // Функция открытия Telegram
+  function openTelegram(params) {
+    const queryString = new URLSearchParams(params).toString();
+    window.location.href = `tg://resolve?domain=biomusor7bot&${queryString}`;
+  }
 
-      // Отображаем данные на странице
-      const deviceHtml = Object.entries(params)
-        .map(([key, value]) => `
-          <div class="info-item">
-            <strong>${key}:</strong> ${value}
-          </div>
-        `).join('');
-      
-      document.getElementById('deviceData').innerHTML = deviceHtml;
+  // Основная функция инициализации
+  function initPage() {
+    let params = getQueryParams();
 
-      // Настраиваем кнопку
-      document.getElementById('telegramBtn').onclick = function() {
-        openTelegram(params);
-      };
+    if (Object.keys(params).length > 0) {
+      // Есть параметры в URL — сохраняем в cookie
+      saveParamsToCookie(params);
+    } else {
+      // Нет параметров в URL — пытаемся взять из cookie
+      params = getParamsFromCookie();
     }
 
-    // Запускаем при загрузке страницы
-    document.addEventListener('DOMContentLoaded', initPage);
-  </script>
-</body>
-</html>
+    if (Object.keys(params).length === 0) {
+      document.getElementById('deviceData').innerHTML = 
+        '<p style="color: red;">❌ Данные оборудования не переданы</p>';
+      document.getElementById('telegramBtn').style.display = 'none';
+      return;
+    }
 
+    const deviceHtml = Object.entries(params)
+      .map(([key, value]) => `
+        <div class="info-item">
+          <strong>${key}:</strong> ${value}
+        </div>
+      `).join('');
+    document.getElementById('deviceData').innerHTML = deviceHtml;
+    document.getElementById('telegramBtn').onclick = function() {
+      openTelegram(params);
+    };
+  }
+  document.addEventListener('DOMContentLoaded', initPage);
+</script>
