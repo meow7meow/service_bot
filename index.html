@@ -9,7 +9,7 @@
     .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
     h1 { color: #2c5282; text-align: center; }
     .device-info { background: #e6f7ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1890ff; }
-    .btn { display: block; padding: 15px 30px; background: #0088cc; color: white; text-decoration: none; 
+    .btn { display: block; padding: 15px 30px; background: #0088cc; color: white; text-decoration: none;
            border-radius: 8px; font-size: 18px; text-align: center; margin: 20px 0; cursor: pointer; border: none; }
     .btn:hover { background: #006699; }
     .btn:disabled { background: #cccccc; cursor: not-allowed; }
@@ -21,7 +21,7 @@
 <body>
   <div class="container">
     <h1>🖨️ ServisDesk</h1>
-    
+
     <div class="device-info">
       <h2>📋 Информация об оборудовании</h2>
       <div id="deviceData">
@@ -38,13 +38,13 @@
     function getQueryParams() {
       const params = {};
       const urlParams = new URLSearchParams(window.location.search);
-      
+
       // Получаем серийный номер из параметра 'serial'
       const serial = urlParams.get('serial');
       if (serial) {
         params.serial = serial;
       }
-      
+
       // Альтернативно: если серийник передается в пути URL /equipment/SN123456
       if (!serial) {
         const pathParts = window.location.pathname.split('/');
@@ -53,7 +53,7 @@
           params.serial = lastPart;
         }
       }
-      
+
       return params;
     }
 
@@ -61,11 +61,11 @@
     async function getEquipmentData(serialNumber) {
       try {
         const response = await fetch(`/api/equipment?serial=${encodeURIComponent(serialNumber)}`);
-        
+
         if (!response.ok) {
           throw new Error(`Ошибка HTTP: ${response.status}`);
         }
-        
+
         const data = await response.json();
         return data;
       } catch (error) {
@@ -77,19 +77,19 @@
     // Функция для отображения данных оборудования
     function displayEquipmentData(equipmentData) {
       const deviceDataElement = document.getElementById('deviceData');
-      
+
       if (!equipmentData || Object.keys(equipmentData).length === 0) {
         deviceDataElement.innerHTML = '<p class="error">❌ Оборудование с указанным серийным номером не найдено</p>';
         return;
       }
-      
+
       const deviceHtml = Object.entries(equipmentData)
         .map(([key, value]) => `
           <div class="info-item">
             <strong>${formatFieldName(key)}:</strong> ${value || 'Не указано'}
           </div>
         `).join('');
-      
+
       deviceDataElement.innerHTML = deviceHtml;
     }
 
@@ -104,14 +104,14 @@
         'internal_id': 'Внутренний идентификатор',
         'address': 'Адрес'
       };
-      
+
       return fieldNames[fieldName] || fieldName.replace(/_/g, ' ');
     }
 
     // Функция для создания Telegram ссылки
     function createTelegramLink(equipmentData) {
       if (!equipmentData) return '#';
-      
+
       const message = `Заявка по оборудованию:\nСерийный номер: ${equipmentData.serial_number || 'Не указан'}\nМодель: ${equipmentData.model || 'Не указана'}\nПроблема: `;
       const encodedMessage = encodeURIComponent(message);
       return `https://t.me/biomusor7bot?start=${encodedMessage}`;
@@ -123,22 +123,22 @@
       const serialNumber = params.serial;
 
       if (!serialNumber) {
-        document.getElementById('deviceData').innerHTML = 
+        document.getElementById('deviceData').innerHTML =
           '<p class="error">❌ Серийный номер оборудования не указан в URL</p>';
         return;
       }
 
       try {
         // Показываем загрузку
-        document.getElementById('deviceData').innerHTML = 
+        document.getElementById('deviceData').innerHTML =
           '<p class="loading">🔍 Поиск оборудования в базе данных...</p>';
 
         // Получаем данные с сервера
         const equipmentData = await getEquipmentData(serialNumber);
-        
+
         // Отображаем данные
         displayEquipmentData(equipmentData);
-        
+
         // Активируем кнопку Telegram
         const telegramBtn = document.getElementById('telegramBtn');
         if (equipmentData) {
@@ -148,9 +148,9 @@
             window.open(telegramUrl, '_blank');
           };
         }
-        
+
       } catch (error) {
-        document.getElementById('deviceData').innerHTML = 
+        document.getElementById('deviceData').innerHTML =
           `<p class="error">❌ Ошибка загрузки данных: ${error.message}</p>`;
       }
     }
