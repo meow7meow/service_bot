@@ -45,11 +45,11 @@
       // Правильный формат для передачи данных боту
       // Параметр start должен содержать специальный параметр, а текст передается отдельно
       const startParam = `${serialNumber}`.replace(/[^a-zA-Z0-9_]/g, '');
-      window.location.href = `tg://resolve?domain=FixPrintBot&start=${startParam}`;
+      window.location.href = `tg://resolve?domain=biomusor7bot&start=${startParam}`;
       
       // Резервный вариант на случай если десктопное приложение не открылось
       setTimeout(() => {
-        window.location.href = `https://t.me/FixPrintBot?start=${startParam}`;
+        window.location.href = `https://t.me/biomusor7bot?start=${startParam}`;
       }, 1000);
     }
 
@@ -57,11 +57,11 @@
     function openTelegramWithMessage(serialNumber) {
       const message = `Серийный номер оборудования: ${serialNumber}`;
       const encodedMessage = encodeURIComponent(message);
-      window.location.href = `tg://resolve?domain=FixPrintBot&text=${encodedMessage}`;
+      window.location.href = `tg://resolve?domain=biomusor7bot&text=${encodedMessage}`;
       
       // Резервный вариант
       setTimeout(() => {
-        window.location.href = `https://t.me/FixPrintBot?text=${encodedMessage}`;
+        window.location.href = `https://t.me/biomusor7bot?text=${encodedMessage}`;
       }, 1000);
     }
 
@@ -117,6 +117,7 @@
   </script>
 </body>
 </html>
+
 
 
 
